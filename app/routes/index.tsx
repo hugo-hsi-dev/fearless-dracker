@@ -1,13 +1,29 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 
-export const Route = createFileRoute('/')({
-  component: Home,
-})
+export const Route = createFileRoute("/")({
+	component: Home,
+});
 
 function Home() {
-  return (
-    <div className="p-2">
-      <h3>Welcome Home!!!</h3>
-    </div>
-  )
+	const [roomId, setRoomId] = useState("");
+	return (
+		<div className="w-screen h-screen flex flex-col gap-4 justify-center items-center">
+			<div className="text-6xl font-bold">Join a room</div>
+			<div className="flex gap-2">
+				<Input
+					className="w-[300px]"
+					value={roomId}
+					onChange={(e) => setRoomId(e.target.value)}
+				/>
+				<Button asChild>
+					<Link to="/$roomId" params={{ roomId }}>
+						Join
+					</Link>
+				</Button>
+			</div>
+		</div>
+	);
 }
