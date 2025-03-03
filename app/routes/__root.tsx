@@ -1,5 +1,6 @@
 import { DefaultCatchBoundary } from "@/components/DefaultCatchBoundary";
 import { NotFound } from "@/components/NotFound";
+import { TanStackRouterDevtools } from "@/components/router-devtools";
 import { Toaster } from "@/components/ui/sonner";
 import appCss from "@/styles/app.css?url";
 import { seo } from "@/utils/seo";
@@ -12,7 +13,7 @@ import {
 	Scripts,
 	createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+
 import type * as React from "react";
 
 export const Route = createRootRouteWithContext<{
@@ -80,10 +81,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
 			<head>
-				<script
+				{/* <script
 					crossOrigin="anonymous"
 					src="//unpkg.com/react-scan/dist/auto.global.js"
-				/>
+				/> */}
 				<HeadContent />
 			</head>
 			<body className="dark">
