@@ -42,11 +42,11 @@ function LayoutComponent() {
 
 	return (
 		<ResizablePanelGroup direction="horizontal">
-			<ResizablePanel defaultSize={25}>
+			<ResizablePanel defaultSize={15}>
 				<AvailableChampionPanel />
 			</ResizablePanel>
 			<ResizableHandle />
-			<ResizablePanel defaultSize={75}>
+			<ResizablePanel defaultSize={85}>
 				<ReservedChampionPanel />
 			</ResizablePanel>
 		</ResizablePanelGroup>

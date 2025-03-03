@@ -8,7 +8,7 @@ export default function AvailableChampionCard(champion: ChampionDTO) {
 	return (
 		<Button
 			variant="ghost"
-			className="justify-between w-full"
+			className="justify-between w-full cursor-pointer"
 			onClick={() => mutate(champion)}
 		>
 			{champion.name}

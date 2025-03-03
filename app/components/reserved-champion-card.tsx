@@ -9,7 +9,11 @@ export default function ReservedChampionCard(champion: ChampionDTO) {
 			onClick={() => {
 				mutate(champion);
 			}}
+			className="group relative cursor-pointer"
 		>
+			<div className="transition absolute left-0 top-0 right-0 bottom-0 opacity-0 group-hover:opacity-100 flex justify-center items-center bg-background/80 font-semibold">
+				{champion.name}
+			</div>
 			<img src={champion.image} alt="Reserved Champion" />
 		</button>
 	);
