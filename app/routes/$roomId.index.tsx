@@ -23,12 +23,16 @@ export const Route = createFileRoute("/$roomId/")({
 	validateSearch: (search) =>
 		availableQuerySchema.merge(reservedQuerySchema).parse(search),
 	loaderDeps: ({ search }) => search,
-	loader: async ({ params: { roomId }, context, deps: { q } }) => {
+	loader: async ({
+		params: { roomId },
+		context,
+		deps: { availableQ, reservedQ },
+	}) => {
 		await context.queryClient.ensureQueryData(
-			championQueries.reserved({ roomId, q }),
+			championQueries.reserved({ roomId, reservedQ }),
 		);
 		await context.queryClient.ensureQueryData(
-			championQueries.available({ roomId, q }),
+			championQueries.available({ roomId, availableQ }),
 		);
 	},
 });
