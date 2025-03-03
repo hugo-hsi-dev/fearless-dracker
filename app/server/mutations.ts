@@ -1,12 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getRouteApi, useParams, useSearch } from "@tanstack/react-router";
+import {
+	getRouteApi,
+	redirect,
+	useParams,
+	useSearch,
+} from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { and, eq } from "drizzle-orm";
 import { createUpdateSchema } from "drizzle-zod";
 import type { z } from "zod";
 import { db } from "./db";
 import { type ChampionDTO, championQueries } from "./queries";
-import { usedChampionTable } from "./schema";
+import { roomTable, usedChampionTable } from "./schema";
 
 const mutateChampionSchema = createUpdateSchema(usedChampionTable)
 	.pick({
@@ -40,16 +45,16 @@ export const championMutations = {
 	useLockChampion: () => {
 		const queryClient = useQueryClient();
 		const { roomId } = useParams({ from: "/$roomId/" });
-		const { q } = useSearch({ from: "/$roomId/" });
+		const { availableQ, reservedQ } = useSearch({ from: "/$roomId/" });
 
 		// Get query keys
 		const availableQueryKey = championQueries.available({
 			roomId,
-			q,
+			availableQ,
 		}).queryKey;
 		const reservedQueryKey = championQueries.reserved({
 			roomId,
-			q,
+			reservedQ,
 		}).queryKey;
 
 		return useMutation({
@@ -102,14 +107,14 @@ export const championMutations = {
 	useUnlockChampion: () => {
 		const queryClient = useQueryClient();
 		const { roomId } = useParams({ from: "/$roomId/" });
-		const { q } = useSearch({ from: "/$roomId/" });
+		const { availableQ, reservedQ } = useSearch({ from: "/$roomId/" });
 		const availableQueryKey = championQueries.available({
 			roomId,
-			q,
+			availableQ,
 		}).queryKey;
 		const reservedQueryKey = championQueries.reserved({
 			roomId,
-			q,
+			reservedQ,
 		}).queryKey;
 
 		return useMutation({
@@ -157,5 +162,23 @@ export const championMutations = {
 				});
 			},
 		});
+	},
+};
+
+const createRoom = createServerFn({ method: "POST" }).handler(async () => {
+	const [{ roomId }] = await db
+		.insert(roomTable)
+		.values({})
+		.returning({ roomId: roomTable.id });
+	throw redirect({
+		to: "/$roomId",
+		params: { roomId },
+		search: { availableQ: "", reservedQ: "" },
+	});
+});
+
+export const roomMutations = {
+	useCreateRoom: () => {
+		return useMutation({ mutationFn: () => createRoom() });
 	},
 };

@@ -204,3 +204,26 @@ export const championQueries = {
 		});
 	},
 };
+
+const getRooms = createServerFn({ method: "GET" }).handler(async () => {
+	return await db.query.roomTable.findMany();
+});
+
+export type Room = Awaited<ReturnType<typeof getRooms>>[number];
+
+export const roomQueries = {
+	all: () => ["rooms"] as const,
+	lists: () => [...roomQueries.all(), "list"] as const,
+	list: () =>
+		queryOptions({
+			queryKey: [...roomQueries.lists()] as const,
+			queryFn: () => getRooms(),
+		}),
+	useList: () => {
+		const serverFn = useServerFn(getRooms);
+		return queryOptions({
+			queryKey: [...roomQueries.list().queryKey] as const,
+			queryFn: () => serverFn(),
+		});
+	},
+};

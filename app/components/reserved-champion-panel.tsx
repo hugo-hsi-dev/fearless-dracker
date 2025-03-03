@@ -1,7 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Divide } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
+import CopyRoomIdButton from "./copy-room-id-button";
 import ReservedChampionList from "./reserved-champion-list";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 export default function ReservedChampionPanel() {
@@ -23,11 +25,14 @@ export default function ReservedChampionPanel() {
 
 	return (
 		<div className="p-6">
-			<Input
-				value={reservedQ}
-				onChange={(e) => setReservedQ(e.target.value)}
-				className="mb-6"
-			/>
+			<div className="flex gap-2">
+				<Input
+					value={reservedQ}
+					onChange={(e) => setReservedQ(e.target.value)}
+					className="mb-6"
+				/>
+				<CopyRoomIdButton />
+			</div>
 			<Suspense>
 				<ReservedChampionList />
 			</Suspense>
