@@ -1,21 +1,34 @@
-import ChampionCard from "@/components/champion-card";
-import { Button } from "@/components/ui/button";
-import UnusedChampionList from "@/components/unused-champion-list";
-import UsedChampionList from "@/components/used-champion-list";
+import AvailableChampionList from "@/components/available-champion-list";
+import AvailableChampionPanel from "@/components/available-champion-panel";
+import ReservedChampionList from "@/components/reserved-champion-list";
+import ReservedChampionPanel from "@/components/reserved-champion-panel";
+
 import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from "@/components/ui/resizable";
+
+import {
+	availableQuerySchema,
 	championQueries,
-	getChampionNames,
-	getUnusedChampions,
-	getUsedChampions,
+	reservedQuerySchema,
 } from "@/server/queries";
 
 import { Outlet, createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 
 export const Route = createFileRoute("/$roomId/")({
 	component: LayoutComponent,
-	loader: async ({ params: { roomId }, context }) => {
+	validateSearch: (search) =>
+		availableQuerySchema.merge(reservedQuerySchema).parse(search),
+	loaderDeps: ({ search }) => search,
+	loader: async ({ params: { roomId }, context, deps: { q } }) => {
 		await context.queryClient.ensureQueryData(
-			championQueries.unused({ roomId }),
+			championQueries.reserved({ roomId, q }),
+		);
+		await context.queryClient.ensureQueryData(
+			championQueries.available({ roomId, q }),
 		);
 	},
 });
@@ -24,13 +37,14 @@ function LayoutComponent() {
 	const data = Route.useLoaderData();
 
 	return (
-		<div className="grid grid-cols-3 gap-4">
-			<div className="col-span-1">
-				<UnusedChampionList />
-			</div>
-			<div className="col-span-2">
-				<UsedChampionList />
-			</div>
-		</div>
+		<ResizablePanelGroup direction="horizontal">
+			<ResizablePanel defaultSize={25}>
+				<AvailableChampionPanel />
+			</ResizablePanel>
+			<ResizableHandle />
+			<ResizablePanel defaultSize={75}>
+				<ReservedChampionPanel />
+			</ResizablePanel>
+		</ResizablePanelGroup>
 	);
 }

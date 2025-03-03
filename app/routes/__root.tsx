@@ -79,9 +79,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
 		<html lang="en">
 			<head>
+				<script
+					crossOrigin="anonymous"
+					src="//unpkg.com/react-scan/dist/auto.global.js"
+				/>
 				<HeadContent />
 			</head>
-			<body>
+			<body className="dark">
 				{children}
 				<TanStackRouterDevtools position="bottom-right" />
 				<ReactQueryDevtools buttonPosition="bottom-left" />
