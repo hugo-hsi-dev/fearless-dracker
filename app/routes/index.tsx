@@ -11,19 +11,9 @@ function Home() {
 	const [roomId, setRoomId] = useState("");
 	return (
 		<div className="w-screen h-screen flex flex-col gap-4 justify-center items-center">
-			<div className="text-6xl font-bold">Join a room</div>
-			<div className="flex gap-2">
-				<Input
-					className="w-[300px]"
-					value={roomId}
-					onChange={(e) => setRoomId(e.target.value)}
-				/>
-				<Button asChild>
-					<Link to="/$roomId" params={{ roomId }}>
-						Join
-					</Link>
-				</Button>
-			</div>
+			<Button asChild>
+				<Link to="/sign-in">Sign In</Link>
+			</Button>
 		</div>
 	);
 }

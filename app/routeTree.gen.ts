@@ -11,17 +11,10 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AdminImport } from './routes/admin'
 import { Route as IndexImport } from './routes/index'
-import { Route as RoomIdIndexImport } from './routes/$roomId.index'
+import { Route as SignInIndexImport } from './routes/sign-in/index'
 
 // Create/Update Routes
-
-const AdminRoute = AdminImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -29,9 +22,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const RoomIdIndexRoute = RoomIdIndexImport.update({
-  id: '/$roomId/',
-  path: '/$roomId/',
+const SignInIndexRoute = SignInIndexImport.update({
+  id: '/sign-in/',
+  path: '/sign-in/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -46,18 +39,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminImport
-      parentRoute: typeof rootRoute
-    }
-    '/$roomId/': {
-      id: '/$roomId/'
-      path: '/$roomId'
-      fullPath: '/$roomId'
-      preLoaderRoute: typeof RoomIdIndexImport
+    '/sign-in/': {
+      id: '/sign-in/'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInIndexImport
       parentRoute: typeof rootRoute
     }
   }
@@ -67,42 +53,37 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/$roomId': typeof RoomIdIndexRoute
+  '/sign-in': typeof SignInIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/$roomId': typeof RoomIdIndexRoute
+  '/sign-in': typeof SignInIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
-  '/$roomId/': typeof RoomIdIndexRoute
+  '/sign-in/': typeof SignInIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/$roomId'
+  fullPaths: '/' | '/sign-in'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/$roomId'
-  id: '__root__' | '/' | '/admin' | '/$roomId/'
+  to: '/' | '/sign-in'
+  id: '__root__' | '/' | '/sign-in/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
-  RoomIdIndexRoute: typeof RoomIdIndexRoute
+  SignInIndexRoute: typeof SignInIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
-  RoomIdIndexRoute: RoomIdIndexRoute,
+  SignInIndexRoute: SignInIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +97,14 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/admin",
-        "/$roomId/"
+        "/sign-in/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/admin": {
-      "filePath": "admin.tsx"
-    },
-    "/$roomId/": {
-      "filePath": "$roomId.index.tsx"
+    "/sign-in/": {
+      "filePath": "sign-in/index.tsx"
     }
   }
 }
