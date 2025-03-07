@@ -11,79 +11,185 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
-import { Route as SignInIndexImport } from './routes/sign-in/index'
+import { Route as PublicRouteImport } from './routes/_public/route'
+import { Route as NoAuthRouteImport } from './routes/_no-auth/route'
+import { Route as AuthRouteImport } from './routes/_auth/route'
+import { Route as PublicIndexImport } from './routes/_public/index'
+import { Route as NoAuthSignInIndexImport } from './routes/_no-auth/sign-in/index'
+import { Route as AuthAppIndexImport } from './routes/_auth/app/index'
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+const PublicRouteRoute = PublicRouteImport.update({
+  id: '/_public',
   getParentRoute: () => rootRoute,
 } as any)
 
-const SignInIndexRoute = SignInIndexImport.update({
+const NoAuthRouteRoute = NoAuthRouteImport.update({
+  id: '/_no-auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthRouteRoute = AuthRouteImport.update({
+  id: '/_auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PublicIndexRoute = PublicIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+
+const NoAuthSignInIndexRoute = NoAuthSignInIndexImport.update({
   id: '/sign-in/',
   path: '/sign-in/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => NoAuthRouteRoute,
+} as any)
+
+const AuthAppIndexRoute = AuthAppIndexImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => AuthRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
-    '/sign-in/': {
-      id: '/sign-in/'
+    '/_no-auth': {
+      id: '/_no-auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof NoAuthRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublicRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/_public/': {
+      id: '/_public/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof PublicIndexImport
+      parentRoute: typeof PublicRouteImport
+    }
+    '/_auth/app/': {
+      id: '/_auth/app/'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthAppIndexImport
+      parentRoute: typeof AuthRouteImport
+    }
+    '/_no-auth/sign-in/': {
+      id: '/_no-auth/sign-in/'
       path: '/sign-in'
       fullPath: '/sign-in'
-      preLoaderRoute: typeof SignInIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof NoAuthSignInIndexImport
+      parentRoute: typeof NoAuthRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AuthRouteRouteChildren {
+  AuthAppIndexRoute: typeof AuthAppIndexRoute
+}
+
+const AuthRouteRouteChildren: AuthRouteRouteChildren = {
+  AuthAppIndexRoute: AuthAppIndexRoute,
+}
+
+const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
+  AuthRouteRouteChildren,
+)
+
+interface NoAuthRouteRouteChildren {
+  NoAuthSignInIndexRoute: typeof NoAuthSignInIndexRoute
+}
+
+const NoAuthRouteRouteChildren: NoAuthRouteRouteChildren = {
+  NoAuthSignInIndexRoute: NoAuthSignInIndexRoute,
+}
+
+const NoAuthRouteRouteWithChildren = NoAuthRouteRoute._addFileChildren(
+  NoAuthRouteRouteChildren,
+)
+
+interface PublicRouteRouteChildren {
+  PublicIndexRoute: typeof PublicIndexRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicIndexRoute: PublicIndexRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/sign-in': typeof SignInIndexRoute
+  '': typeof PublicRouteRouteWithChildren
+  '/': typeof PublicIndexRoute
+  '/app': typeof AuthAppIndexRoute
+  '/sign-in': typeof NoAuthSignInIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/sign-in': typeof SignInIndexRoute
+  '': typeof NoAuthRouteRouteWithChildren
+  '/': typeof PublicIndexRoute
+  '/app': typeof AuthAppIndexRoute
+  '/sign-in': typeof NoAuthSignInIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/sign-in/': typeof SignInIndexRoute
+  '/_auth': typeof AuthRouteRouteWithChildren
+  '/_no-auth': typeof NoAuthRouteRouteWithChildren
+  '/_public': typeof PublicRouteRouteWithChildren
+  '/_public/': typeof PublicIndexRoute
+  '/_auth/app/': typeof AuthAppIndexRoute
+  '/_no-auth/sign-in/': typeof NoAuthSignInIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sign-in'
+  fullPaths: '' | '/' | '/app' | '/sign-in'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sign-in'
-  id: '__root__' | '/' | '/sign-in/'
+  to: '' | '/' | '/app' | '/sign-in'
+  id:
+    | '__root__'
+    | '/_auth'
+    | '/_no-auth'
+    | '/_public'
+    | '/_public/'
+    | '/_auth/app/'
+    | '/_no-auth/sign-in/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SignInIndexRoute: typeof SignInIndexRoute
+  AuthRouteRoute: typeof AuthRouteRouteWithChildren
+  NoAuthRouteRoute: typeof NoAuthRouteRouteWithChildren
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SignInIndexRoute: SignInIndexRoute,
+  AuthRouteRoute: AuthRouteRouteWithChildren,
+  NoAuthRouteRoute: NoAuthRouteRouteWithChildren,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -96,15 +202,40 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/sign-in/"
+        "/_auth",
+        "/_no-auth",
+        "/_public"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_auth": {
+      "filePath": "_auth/route.tsx",
+      "children": [
+        "/_auth/app/"
+      ]
     },
-    "/sign-in/": {
-      "filePath": "sign-in/index.tsx"
+    "/_no-auth": {
+      "filePath": "_no-auth/route.tsx",
+      "children": [
+        "/_no-auth/sign-in/"
+      ]
+    },
+    "/_public": {
+      "filePath": "_public/route.tsx",
+      "children": [
+        "/_public/"
+      ]
+    },
+    "/_public/": {
+      "filePath": "_public/index.tsx",
+      "parent": "/_public"
+    },
+    "/_auth/app/": {
+      "filePath": "_auth/app/index.tsx",
+      "parent": "/_auth"
+    },
+    "/_no-auth/sign-in/": {
+      "filePath": "_no-auth/sign-in/index.tsx",
+      "parent": "/_no-auth"
     }
   }
 }
