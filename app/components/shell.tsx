@@ -1,12 +1,14 @@
-import { Divide } from "lucide-react";
-import type { PropsWithChildren } from "react";
-import Header from "./header";
+import { Divide } from 'lucide-react';
+import type { PropsWithChildren } from 'react';
+import Footer from './footer';
+import Header from './header';
 
 export default function Shell({ children }: PropsWithChildren) {
 	return (
-		<div className="min-h-screen">
+		<div className="min-h-screen flex flex-col">
 			<Header />
-			{children}
+			<main className="flex-1">{children}</main>
+			<Footer />
 		</div>
 	);
 }

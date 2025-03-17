@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import Shell from "@/components/shell";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_public")({
@@ -7,8 +8,8 @@ export const Route = createFileRoute("/_public")({
 
 function RouteComponent() {
 	return (
-		<Header>
+		<Shell>
 			<div>Hello "/_public"!</div>
-		</Header>
+		</Shell>
 	);
 }

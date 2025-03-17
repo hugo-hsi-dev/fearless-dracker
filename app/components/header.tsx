@@ -1,10 +1,10 @@
 import { Divide } from "lucide-react";
 import type { PropsWithChildren } from "react";
 
-export default function Header({ children }: PropsWithChildren) {
+export default function Header() {
 	return (
 		<header>
-			<h1>My App</h1>
+			<div>Hello World</div>
 		</header>
 	);
 }

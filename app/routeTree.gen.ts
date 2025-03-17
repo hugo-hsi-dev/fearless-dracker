@@ -15,8 +15,10 @@ import { Route as PublicRouteImport } from './routes/_public/route'
 import { Route as NoAuthRouteImport } from './routes/_no-auth/route'
 import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as PublicIndexImport } from './routes/_public/index'
+import { Route as AuthAppRouteImport } from './routes/_auth/app/route'
 import { Route as NoAuthSignInIndexImport } from './routes/_no-auth/sign-in/index'
 import { Route as AuthAppIndexImport } from './routes/_auth/app/index'
+import { Route as AuthAppRunCodeIndexImport } from './routes/_auth/app/$runCode/index'
 
 // Create/Update Routes
 
@@ -41,6 +43,12 @@ const PublicIndexRoute = PublicIndexImport.update({
   getParentRoute: () => PublicRouteRoute,
 } as any)
 
+const AuthAppRouteRoute = AuthAppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => AuthRouteRoute,
+} as any)
+
 const NoAuthSignInIndexRoute = NoAuthSignInIndexImport.update({
   id: '/sign-in/',
   path: '/sign-in/',
@@ -48,9 +56,15 @@ const NoAuthSignInIndexRoute = NoAuthSignInIndexImport.update({
 } as any)
 
 const AuthAppIndexRoute = AuthAppIndexImport.update({
-  id: '/app/',
-  path: '/app/',
-  getParentRoute: () => AuthRouteRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthAppRouteRoute,
+} as any)
+
+const AuthAppRunCodeIndexRoute = AuthAppRunCodeIndexImport.update({
+  id: '/$runCode/',
+  path: '/$runCode/',
+  getParentRoute: () => AuthAppRouteRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -78,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicRouteImport
       parentRoute: typeof rootRoute
     }
+    '/_auth/app': {
+      id: '/_auth/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AuthAppRouteImport
+      parentRoute: typeof AuthRouteImport
+    }
     '/_public/': {
       id: '/_public/'
       path: '/'
@@ -87,10 +108,10 @@ declare module '@tanstack/react-router' {
     }
     '/_auth/app/': {
       id: '/_auth/app/'
-      path: '/app'
-      fullPath: '/app'
+      path: '/'
+      fullPath: '/app/'
       preLoaderRoute: typeof AuthAppIndexImport
-      parentRoute: typeof AuthRouteImport
+      parentRoute: typeof AuthAppRouteImport
     }
     '/_no-auth/sign-in/': {
       id: '/_no-auth/sign-in/'
@@ -99,17 +120,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoAuthSignInIndexImport
       parentRoute: typeof NoAuthRouteImport
     }
+    '/_auth/app/$runCode/': {
+      id: '/_auth/app/$runCode/'
+      path: '/$runCode'
+      fullPath: '/app/$runCode'
+      preLoaderRoute: typeof AuthAppRunCodeIndexImport
+      parentRoute: typeof AuthAppRouteImport
+    }
   }
 }
 
 // Create and export the route tree
 
-interface AuthRouteRouteChildren {
+interface AuthAppRouteRouteChildren {
   AuthAppIndexRoute: typeof AuthAppIndexRoute
+  AuthAppRunCodeIndexRoute: typeof AuthAppRunCodeIndexRoute
+}
+
+const AuthAppRouteRouteChildren: AuthAppRouteRouteChildren = {
+  AuthAppIndexRoute: AuthAppIndexRoute,
+  AuthAppRunCodeIndexRoute: AuthAppRunCodeIndexRoute,
+}
+
+const AuthAppRouteRouteWithChildren = AuthAppRouteRoute._addFileChildren(
+  AuthAppRouteRouteChildren,
+)
+
+interface AuthRouteRouteChildren {
+  AuthAppRouteRoute: typeof AuthAppRouteRouteWithChildren
 }
 
 const AuthRouteRouteChildren: AuthRouteRouteChildren = {
-  AuthAppIndexRoute: AuthAppIndexRoute,
+  AuthAppRouteRoute: AuthAppRouteRouteWithChildren,
 }
 
 const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
@@ -142,9 +184,11 @@ const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof PublicRouteRouteWithChildren
+  '/app': typeof AuthAppRouteRouteWithChildren
   '/': typeof PublicIndexRoute
-  '/app': typeof AuthAppIndexRoute
+  '/app/': typeof AuthAppIndexRoute
   '/sign-in': typeof NoAuthSignInIndexRoute
+  '/app/$runCode': typeof AuthAppRunCodeIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -152,6 +196,7 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/app': typeof AuthAppIndexRoute
   '/sign-in': typeof NoAuthSignInIndexRoute
+  '/app/$runCode': typeof AuthAppRunCodeIndexRoute
 }
 
 export interface FileRoutesById {
@@ -159,24 +204,28 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteRouteWithChildren
   '/_no-auth': typeof NoAuthRouteRouteWithChildren
   '/_public': typeof PublicRouteRouteWithChildren
+  '/_auth/app': typeof AuthAppRouteRouteWithChildren
   '/_public/': typeof PublicIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_no-auth/sign-in/': typeof NoAuthSignInIndexRoute
+  '/_auth/app/$runCode/': typeof AuthAppRunCodeIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/' | '/app' | '/sign-in'
+  fullPaths: '' | '/app' | '/' | '/app/' | '/sign-in' | '/app/$runCode'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/' | '/app' | '/sign-in'
+  to: '' | '/' | '/app' | '/sign-in' | '/app/$runCode'
   id:
     | '__root__'
     | '/_auth'
     | '/_no-auth'
     | '/_public'
+    | '/_auth/app'
     | '/_public/'
     | '/_auth/app/'
     | '/_no-auth/sign-in/'
+    | '/_auth/app/$runCode/'
   fileRoutesById: FileRoutesById
 }
 
@@ -210,7 +259,7 @@ export const routeTree = rootRoute
     "/_auth": {
       "filePath": "_auth/route.tsx",
       "children": [
-        "/_auth/app/"
+        "/_auth/app"
       ]
     },
     "/_no-auth": {
@@ -225,17 +274,29 @@ export const routeTree = rootRoute
         "/_public/"
       ]
     },
+    "/_auth/app": {
+      "filePath": "_auth/app/route.tsx",
+      "parent": "/_auth",
+      "children": [
+        "/_auth/app/",
+        "/_auth/app/$runCode/"
+      ]
+    },
     "/_public/": {
       "filePath": "_public/index.tsx",
       "parent": "/_public"
     },
     "/_auth/app/": {
       "filePath": "_auth/app/index.tsx",
-      "parent": "/_auth"
+      "parent": "/_auth/app"
     },
     "/_no-auth/sign-in/": {
       "filePath": "_no-auth/sign-in/index.tsx",
       "parent": "/_no-auth"
+    },
+    "/_auth/app/$runCode/": {
+      "filePath": "_auth/app/$runCode/index.tsx",
+      "parent": "/_auth/app"
     }
   }
 }
