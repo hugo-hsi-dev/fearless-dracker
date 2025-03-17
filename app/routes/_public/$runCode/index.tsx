@@ -52,9 +52,6 @@ function RouteComponent() {
 					</CardContent>
 				</Card>
 			</div>
-			<QuickCheckModal asChild>
-				<Button>Quick Check</Button>
-			</QuickCheckModal>
 			<ReservedChampionGrid />
 		</div>
 	);
