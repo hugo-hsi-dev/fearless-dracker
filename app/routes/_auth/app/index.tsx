@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/sidebar';
 import { auth } from '@/features/auth/lib/auth';
 import { authQueries, getRequiredAuth } from '@/features/auth/lib/queries';
+import { championMutations } from '@/features/champion/lib/mutations';
 import { runMutations } from '@/features/run/lib/mutations';
 
 import { runQueries } from '@/features/run/lib/queries';
@@ -27,6 +28,7 @@ export const Route = createFileRoute('/_auth/app/')({
 
 function RouteComponent() {
 	const { mutate } = runMutations.useCreate();
+	const syncChampions = championMutations.useSync();
 	const [input, setInput] = useState('');
 	return (
 		<>
@@ -43,7 +45,14 @@ function RouteComponent() {
 						value={input}
 						onChange={(e) => setInput(e.target.value)}
 					/>
-					<Button onClick={() => mutate({ name: input })}>Create a room</Button>
+					<Button
+						onClick={() => {
+							mutate({ name: input });
+							syncChampions.mutate();
+						}}
+					>
+						Create a room
+					</Button>
 				</CardContent>
 			</Card>
 		</>
