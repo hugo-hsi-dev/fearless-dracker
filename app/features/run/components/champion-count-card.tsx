@@ -6,16 +6,15 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import { championQueries } from '@/features/champion/lib/queries';
+import useRunCode from '@/hooks/use-run-code';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useParams, useSearch } from '@tanstack/react-router';
 
 export default function ChampionCountCard() {
-	const { runCode } = useParams({ from: '/_auth/app/$runCode/' });
-	const reservedChampionsOpts = championQueries
-		.reserved({ code: runCode })
-		.useOpts();
+	const { code } = useRunCode();
+	const reservedChampionsOpts = championQueries.reserved({ code }).useOpts();
 	const championAvailabilityOpts = championQueries
-		.availability({ code: runCode, name: '' })
+		.availability({ code, name: '' })
 		.useOpts();
 	const reservedChampions = useSuspenseQuery({
 		...reservedChampionsOpts,
@@ -26,16 +25,16 @@ export default function ChampionCountCard() {
 		select: (data) => data.length,
 	});
 	return (
-		<Card className="gap-2">
+		<Card className="gap-2 h-[160px] justify-between">
 			<CardHeader>
 				<CardTitle className="text-sm font-medium">Used Champions</CardTitle>
 			</CardHeader>
-			<CardContent>
-				<div className="text-2xl font-bold tracking-tighter">
+			<CardContent className="flex flex-col gap-1">
+				<div className="text-4xl font-bold tracking-tighter">
 					{reservedChampions.data}
 				</div>
 				<div className="text-xs text-muted-foreground">
-					Out of {championAvailability.data} champions
+					of {championAvailability.data} champions
 				</div>
 			</CardContent>
 		</Card>

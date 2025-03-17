@@ -1,4 +1,11 @@
 import { Button } from '@/components/ui/button';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
 	SidebarInset,
@@ -7,7 +14,6 @@ import {
 } from '@/components/ui/sidebar';
 import { auth } from '@/features/auth/lib/auth';
 import { authQueries, getRequiredAuth } from '@/features/auth/lib/queries';
-import MemberList from '@/features/member/components/member-list';
 import { runMutations } from '@/features/run/lib/mutations';
 
 import { runQueries } from '@/features/run/lib/queries';
@@ -24,9 +30,22 @@ function RouteComponent() {
 	const [input, setInput] = useState('');
 	return (
 		<>
-			<div>Hello</div>
-			<Input value={input} onChange={(e) => setInput(e.target.value)} />
-			<Button onClick={() => mutate({ name: input })}>Create a room</Button>
+			<Card>
+				<CardHeader>
+					<CardTitle>Create a new run</CardTitle>
+					<CardDescription>
+						Create a run to track and share used champions
+					</CardDescription>
+				</CardHeader>
+				<CardContent className="flex gap-4">
+					<Input
+						placeholder="Enter a run name"
+						value={input}
+						onChange={(e) => setInput(e.target.value)}
+					/>
+					<Button onClick={() => mutate({ name: input })}>Create a room</Button>
+				</CardContent>
+			</Card>
 		</>
 	);
 }

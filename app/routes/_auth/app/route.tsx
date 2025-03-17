@@ -33,7 +33,9 @@ function RouteComponent() {
 			<AppSidebar />
 			<SidebarInset className="p-6">
 				<SidebarTrigger />
-				<Outlet />
+				<div className="mt-6">
+					<Outlet />
+				</div>
 			</SidebarInset>
 			{match && <RunSidebar />}
 		</SidebarProvider>

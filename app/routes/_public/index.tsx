@@ -1,9 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button';
+import QuickCheckModal from '@/features/champion/components/quick-check-modal';
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_public/')({
-  component: RouteComponent,
-})
+	component: RouteComponent,
+});
 
 function RouteComponent() {
-  return <div>Hello "/_public/"!</div>
+	return <div>home</div>;
 }

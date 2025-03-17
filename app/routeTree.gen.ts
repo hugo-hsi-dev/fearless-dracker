@@ -16,6 +16,7 @@ import { Route as NoAuthRouteImport } from './routes/_no-auth/route'
 import { Route as AuthRouteImport } from './routes/_auth/route'
 import { Route as PublicIndexImport } from './routes/_public/index'
 import { Route as AuthAppRouteImport } from './routes/_auth/app/route'
+import { Route as PublicRunCodeIndexImport } from './routes/_public/$runCode/index'
 import { Route as NoAuthSignInIndexImport } from './routes/_no-auth/sign-in/index'
 import { Route as AuthAppIndexImport } from './routes/_auth/app/index'
 import { Route as AuthAppRunCodeIndexImport } from './routes/_auth/app/$runCode/index'
@@ -47,6 +48,12 @@ const AuthAppRouteRoute = AuthAppRouteImport.update({
   id: '/app',
   path: '/app',
   getParentRoute: () => AuthRouteRoute,
+} as any)
+
+const PublicRunCodeIndexRoute = PublicRunCodeIndexImport.update({
+  id: '/$runCode/',
+  path: '/$runCode/',
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 
 const NoAuthSignInIndexRoute = NoAuthSignInIndexImport.update({
@@ -120,6 +127,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NoAuthSignInIndexImport
       parentRoute: typeof NoAuthRouteImport
     }
+    '/_public/$runCode/': {
+      id: '/_public/$runCode/'
+      path: '/$runCode'
+      fullPath: '/$runCode'
+      preLoaderRoute: typeof PublicRunCodeIndexImport
+      parentRoute: typeof PublicRouteImport
+    }
     '/_auth/app/$runCode/': {
       id: '/_auth/app/$runCode/'
       path: '/$runCode'
@@ -172,10 +186,12 @@ const NoAuthRouteRouteWithChildren = NoAuthRouteRoute._addFileChildren(
 
 interface PublicRouteRouteChildren {
   PublicIndexRoute: typeof PublicIndexRoute
+  PublicRunCodeIndexRoute: typeof PublicRunCodeIndexRoute
 }
 
 const PublicRouteRouteChildren: PublicRouteRouteChildren = {
   PublicIndexRoute: PublicIndexRoute,
+  PublicRunCodeIndexRoute: PublicRunCodeIndexRoute,
 }
 
 const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
@@ -188,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/': typeof PublicIndexRoute
   '/app/': typeof AuthAppIndexRoute
   '/sign-in': typeof NoAuthSignInIndexRoute
+  '/$runCode': typeof PublicRunCodeIndexRoute
   '/app/$runCode': typeof AuthAppRunCodeIndexRoute
 }
 
@@ -196,6 +213,7 @@ export interface FileRoutesByTo {
   '/': typeof PublicIndexRoute
   '/app': typeof AuthAppIndexRoute
   '/sign-in': typeof NoAuthSignInIndexRoute
+  '/$runCode': typeof PublicRunCodeIndexRoute
   '/app/$runCode': typeof AuthAppRunCodeIndexRoute
 }
 
@@ -208,14 +226,22 @@ export interface FileRoutesById {
   '/_public/': typeof PublicIndexRoute
   '/_auth/app/': typeof AuthAppIndexRoute
   '/_no-auth/sign-in/': typeof NoAuthSignInIndexRoute
+  '/_public/$runCode/': typeof PublicRunCodeIndexRoute
   '/_auth/app/$runCode/': typeof AuthAppRunCodeIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '' | '/app' | '/' | '/app/' | '/sign-in' | '/app/$runCode'
+  fullPaths:
+    | ''
+    | '/app'
+    | '/'
+    | '/app/'
+    | '/sign-in'
+    | '/$runCode'
+    | '/app/$runCode'
   fileRoutesByTo: FileRoutesByTo
-  to: '' | '/' | '/app' | '/sign-in' | '/app/$runCode'
+  to: '' | '/' | '/app' | '/sign-in' | '/$runCode' | '/app/$runCode'
   id:
     | '__root__'
     | '/_auth'
@@ -225,6 +251,7 @@ export interface FileRouteTypes {
     | '/_public/'
     | '/_auth/app/'
     | '/_no-auth/sign-in/'
+    | '/_public/$runCode/'
     | '/_auth/app/$runCode/'
   fileRoutesById: FileRoutesById
 }
@@ -271,7 +298,8 @@ export const routeTree = rootRoute
     "/_public": {
       "filePath": "_public/route.tsx",
       "children": [
-        "/_public/"
+        "/_public/",
+        "/_public/$runCode/"
       ]
     },
     "/_auth/app": {
@@ -293,6 +321,10 @@ export const routeTree = rootRoute
     "/_no-auth/sign-in/": {
       "filePath": "_no-auth/sign-in/index.tsx",
       "parent": "/_no-auth"
+    },
+    "/_public/$runCode/": {
+      "filePath": "_public/$runCode/index.tsx",
+      "parent": "/_public"
     },
     "/_auth/app/$runCode/": {
       "filePath": "_auth/app/$runCode/index.tsx",

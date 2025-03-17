@@ -1,3 +1,4 @@
+import Status from '@/components/status';
 import { Input } from '@/components/ui/input';
 import {
 	SidebarGroup,
@@ -49,7 +50,7 @@ export default function AvailabilitySidebarGroup() {
 									unlock.mutate({ code: runCode, championId: id });
 								}}
 							>
-								{reserved && <Check />}
+								<Status available={!reserved} />
 								{name}
 							</SidebarMenuButton>
 						</SidebarMenuItem>

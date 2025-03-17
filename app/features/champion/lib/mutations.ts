@@ -1,4 +1,5 @@
 import { requireAuth } from '@/features/auth/middlewares/require-auth';
+import useAvailabilitySearch from '@/hooks/use-availability-search';
 import { db } from '@/lib/db';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { notFound, useSearch } from '@tanstack/react-router';
@@ -181,26 +182,24 @@ export const championMutations = {
 	useSync: () => useMutation({ mutationFn: () => syncChampion() }),
 	useLock: () => {
 		const queryClient = useQueryClient();
-		const { availabilitySearch } = useSearch({ from: '/_auth/app/$runCode/' });
+		const [name] = useAvailabilitySearch();
 		return useMutation({
 			mutationFn: (data: ToggleChampionSchema) => lockChampion({ data }),
 			onMutate: async (data) => {
 				await queryClient.cancelQueries({
 					queryKey: championQueries
-						.availability({ code: data.code, name: availabilitySearch })
+						.availability({ code: data.code, name })
 						.opts().queryKey,
 				});
 
 				const previousChampions = queryClient.getQueryData(
-					championQueries
-						.availability({ code: data.code, name: availabilitySearch })
-						.opts().queryKey,
+					championQueries.availability({ code: data.code, name }).opts()
+						.queryKey,
 				);
 
 				queryClient.setQueryData(
-					championQueries
-						.availability({ code: data.code, name: availabilitySearch })
-						.opts().queryKey,
+					championQueries.availability({ code: data.code, name }).opts()
+						.queryKey,
 					(champions) => {
 						if (champions) {
 							return champions.map((champion) => {
@@ -217,9 +216,8 @@ export const championMutations = {
 			},
 			onError: ({ message }, data, context) => {
 				queryClient.setQueryData(
-					championQueries
-						.availability({ code: data.code, name: availabilitySearch })
-						.opts().queryKey,
+					championQueries.availability({ code: data.code, name }).opts()
+						.queryKey,
 					context?.previousChampions,
 				);
 				toast.error(message);
@@ -227,7 +225,7 @@ export const championMutations = {
 			onSettled: (_void, _error, data) => {
 				queryClient.invalidateQueries({
 					queryKey: championQueries
-						.availability({ code: data.code, name: availabilitySearch })
+						.availability({ code: data.code, name })
 						.opts().queryKey,
 				});
 				queryClient.invalidateQueries({
@@ -239,7 +237,7 @@ export const championMutations = {
 	},
 	useUnlock: () => {
 		const queryClient = useQueryClient();
-		const { availabilitySearch } = useSearch({ from: '/_auth/app/$runCode/' });
+		const [name] = useAvailabilitySearch();
 
 		return useMutation({
 			mutationFn: (data: ToggleChampionSchema) => unlockChampion({ data }),
@@ -249,9 +247,8 @@ export const championMutations = {
 				});
 
 				const previousChampions = queryClient.getQueryData(
-					championQueries
-						.availability({ code: data.code, name: availabilitySearch })
-						.opts().queryKey,
+					championQueries.availability({ code: data.code, name }).opts()
+						.queryKey,
 				);
 
 				const previousReserved = queryClient.getQueryData(
@@ -259,9 +256,8 @@ export const championMutations = {
 				);
 
 				queryClient.setQueryData(
-					championQueries
-						.availability({ code: data.code, name: availabilitySearch })
-						.opts().queryKey,
+					championQueries.availability({ code: data.code, name }).opts()
+						.queryKey,
 					(champions) => {
 						if (champions) {
 							return champions.map((champion) => {
@@ -287,9 +283,8 @@ export const championMutations = {
 			},
 			onError: ({ message }, data, context) => {
 				queryClient.setQueryData(
-					championQueries
-						.availability({ code: data.code, name: availabilitySearch })
-						.opts().queryKey,
+					championQueries.availability({ code: data.code, name }).opts()
+						.queryKey,
 					context?.previousChampions,
 				);
 				queryClient.setQueryData(
@@ -301,7 +296,7 @@ export const championMutations = {
 			onSettled: (_void, _error, data) => {
 				queryClient.invalidateQueries({
 					queryKey: championQueries
-						.availability({ code: data.code, name: availabilitySearch })
+						.availability({ code: data.code, name })
 						.opts().queryKey,
 				});
 				queryClient.invalidateQueries({
